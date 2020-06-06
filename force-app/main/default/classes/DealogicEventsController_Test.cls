@@ -6,7 +6,7 @@ public class DealogicEventsController_Test {
         Integer i;
         List<Dealogic_Event_Conference__c> testDEC = new List<Dealogic_Event_Conference__c>();
         Date temDate = Date.today();
-        for( i=0;i<12;i++) {
+        for( i=0;i<10;i++) {
             if( i <4){
                 system.debug('added Dealogic_Event_Conference__c : ' +i);
                 testDEC.add(new Dealogic_Event_Conference__c(Name = 'testDEC'+i, Start_Date__c =Date.today(),End_Date__c =temDate.addDays(i),External_Id__c ='CONFERENCE1000'+i,Status__c='C'));
