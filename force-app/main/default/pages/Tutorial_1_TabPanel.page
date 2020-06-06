@@ -1,0 +1,17 @@
+<apex:page controller="Tutorial_1_TabPanel">
+    <apex:form >
+        <apex:tabPanel switchType="client">
+            <apex:tab label="Tab 1"><apex:inputText value="{!A1}" /></apex:tab>
+            <apex:tab label="Tab 2"><apex:inputText value="{!A1}" /></apex:tab>
+        </apex:tabPanel>        
+        <apex:tabPanel switchType="server">
+            <apex:tab label="Tab 1"><apex:inputText value="{!A2}" /></apex:tab>
+            <apex:tab label="Tab 2"><apex:inputText value="{!A2}" /></apex:tab>
+        </apex:tabPanel>
+    
+        <apex:tabPanel switchType="ajax">
+            <apex:tab label="Tab 1"><apex:inputText value="{!A3}" /></apex:tab>
+            <apex:tab label="Tab 2"><apex:inputText value="{!A3}" /></apex:tab>
+        </apex:tabPanel>
+    </apex:form>
+</apex:page>

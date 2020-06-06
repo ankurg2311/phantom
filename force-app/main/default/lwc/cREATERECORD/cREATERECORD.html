@@ -1,0 +1,545 @@
+<template >
+    <template  if:true ={formCreate}>
+                <lightning-card title="Record Entry " icon-name="standard:account">
+                        <div class="slds-p-around_x-small">
+                        
+                                  <table style ="width :50%;margin-left:15px;border-spacing:0;margin-top:-63px;">
+                                    <tr>
+                                        <td style="font-weight: bold;">
+                                            Salesperson/Trader : 
+                                        </td>
+                                        <td>
+                                            <lightning-combobox name="Salesperson/Trader"  required
+                                                     value={rec.trader} placeholder="-Select-"
+                                                    options={optionsAccountTrader} onchange={handleAccountTraderChange}>
+                                                </lightning-combobox>
+                                        </td>
+                                    </tr>
+                                        <tr>
+                                            <td style="font-weight: bold;">
+                                                Account Name: 
+                                            </td>
+                                            <td>
+                                                <lightning-input value={rec.Name} onchange={handleNameChange} required></lightning-input>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold;">
+                                                Address:
+                                                City/State/Zip/Postcode/Country:- 
+                                            </td>
+                                            <td>
+                                                <!--template if:true={mapMarkers}>
+                                                    <lightning-map map-markers={mapMarkers}></lightning-map>
+                                                </template-->
+                                                    <lightning-input-address
+                                                        address-label=""
+                                                        street-label="Street"
+                                                        city-label="City"
+                                                        country-label="Country"
+                                                        province-label="State"
+                                                        postal-code-label="Postcode"
+                                                        street="121 Spear St."
+                                                        city="San Francisco"
+                                                        country="US"
+                                                        province="CA"
+                                                        postal-code="94105"
+                                                        required
+                                                        field-level-help="Help Text for inputAddress field" 
+                                                        onchange ={handleAddressChange} >
+                                                    </lightning-input-address>
+                                                
+                                                    
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold;">
+                                                Account Main Phone #: 
+                                            </td>
+                                            <td>
+                                                <lightning-input type ="text" value={rec.MainPhone} onchange={handleMainPhoneChange}></lightning-input>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold;"> 
+                                                Primary Line of Business: 
+                                            </td>
+                                            <td>
+                                                <lightning-input value={rec.PrimaryLB} required onchange={handlePrimaryLBChange}></lightning-input>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold;">
+                                                Assets Under Management: 
+                                            </td>
+                                            <td>
+                                                <lightning-input required value={rec.AssestUM} onchange={handleAssestUMChange}></lightning-input>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td style="font-weight: bold;">
+                                                Government Fund? 
+                                            </td>
+                                            <td>
+                                            <template for:each={optionsFund} for:item="opt">
+                                                <span  key={opt.value} class="slds-radio myRadio1">
+                                               <input 
+                                                  required
+                                                  class="singleRadio" 
+                                                  type="radio" 
+                                                  id={opt.value} 
+                                                  value={opt.value} 
+                                                  name="Myoptions1" 
+                                                  onchange={handleGFundchange}/>
+                                              <label class="slds-radio__label" for={opt.value}>
+                                                  <span class="slds-radio_faux"></span>
+                                                  <span class="slds-form-element__label">{opt.value}</span>
+                                              </label>
+                                          </span>
+                                           </template>
+                                        </td>     
+                                              
+                                        </tr><br></br>
+                                        <tr>
+                                            <td style="font-weight: bold;">
+                                                Account Type: 
+                                            </td>
+                                            <td>
+                                            <template for:each={optionsAccountType} for:item="opt">
+                                                <span  key={opt.value} class="slds-radio myRadio2">
+                                               <input
+                                                  required 
+                                                  class="singleRadio" 
+                                                  type="radio" 
+                                                  id={opt.value} 
+                                                  value={opt.value} 
+                                                  name="Myoptions2" 
+                                                  onchange={handleradiochangeAcType}/>
+                                              <label class="slds-radio__label" for={opt.value}>
+                                                  <span class="slds-radio_faux"></span>
+                                                  <span class="slds-form-element__label">{opt.value}</span>
+                                              </label>
+                                          </span>
+                                           </template>
+                                        </td>     
+                                         
+                                        </tr>
+                                        <!--tr>
+                                            <td>
+                                                Industry: 
+                                            </td>
+                                            <td>
+                                                <lightning-combobox name="Industry" 
+                                                     value={rec.Industry} placeholder="-Select-"
+                                                    options={industry} onchange={handleIndChange}>
+                                                </lightning-combobox>
+                                            </td>
+                                        </tr-->
+                                        
+                                  </table>
+                                     
+                               
+                               
+                                    <h3 class="slds-section-title--divider">Contact Information</h3>
+                                    <table style ="width :50%;margin-left: 15px;border-spacing:0;">
+                                    <tr>
+                                        <td style="font-weight: bold;">
+                                            Contact FirstName :
+                                        </td>
+                                        <td>
+                                    
+                                            <lightning-input  value={rec.FName} onchange={handleFNameChange}></lightning-input>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold;">
+                                            Contact LastName :
+                                        </td>
+                                        <td>
+                                            <lightning-input  value={rec.LName} onchange={handleLNameChange}></lightning-input>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold;">
+                                        Role :
+                                    </td>
+                                    <td>
+                                        <template for:each={optionsRole} for:item="opt">
+                                            <span  key={opt.value} class="slds-radio myRadio3">
+                                            <input 
+                                                class="singleRadio" 
+                                                type="radio" 
+                                                id={opt.value} 
+                                                value={opt.value} 
+                                                name="Myoptions3" 
+                                                onchange={handleradiochangeCRole}/>
+                                            <label class="slds-radio__label" for={opt.value}>
+                                                <span class="slds-radio_faux"></span>
+                                                <span class="slds-form-element__label">{opt.value}</span>
+                                            </label>
+                                        </span>
+                                       </template>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold;">
+                                        Title:
+                                    </td>
+                                    <td>
+                                        <lightning-input  value={rec.Title} onchange={handleCTitleChange}></lightning-input>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold;">
+                                        Product Responsibility:
+                                    </td>
+                                    <td>
+                                  
+                                    <template  for:each={optionsProductResponse} for:item="opt">
+                                        <lightning-input type="checkbox"
+                                                            key = {opt.value}
+                                                            label={opt.label}
+                                                            value={opt.value}
+                                                            onchange ={handleChangeProductOption}>
+                                        </lightning-input>
+                                  </template> 
+                                   
+                            </td>
+                                </tr>
+    
+                                <tr>
+                                    <td >
+                                       <span style="font-weight: bold;"> Influence:</span>
+                                        <br></br>
+                                        <template for:each={optionsInfluence} for:item="opt">
+                                            <span  key={opt.value} class="slds-radio myRadio4">
+                                           <input 
+                                              class="singleRadio" 
+                                              type="radio" 
+                                              id={opt.value} 
+                                              value={opt.value} 
+                                              name="Myoptions4" 
+                                              onchange={handleradiochangeInfluence}/>
+                                          <label class="slds-radio__label" for={opt.value}>
+                                              <span class="slds-radio_faux"></span>
+                                              <span class="slds-form-element__label">{opt.value}</span>
+                                          </label>
+                                      </span>
+                                       </template>
+    
+                                    </td>
+                                    <td >
+                                        <span style="font-weight: bold;"> BR.com :</span>
+                                        <br></br>
+                                        <template for:each={optionsBRcom} for:item="opt">                          
+                                                <lightning-input type="checkbox"
+                                                                    key = {opt.value}
+                                                                    label={opt.label}
+                                                                    value={opt.value}
+                                                                    onchange ={handleradiochangeBRcom}>
+                                                </lightning-input>
+                                       </template>
+                                    </td>
+                                </tr>
+    
+                                <tr>
+                                     <td style="font-weight: bold;">
+                                            Phone :
+                                            <br>
+                                            <lightning-input type="Phone" value={rec.Phone} onchange={handlePhnChange}></lightning-input><br/>
+                                     </td>   
+                                     <td style="font-weight: bold;">
+                                        Email :
+                                        <br>
+                                        <lightning-input type="Email"  value={rec.CEmail} onchange={handleCEmailChange}></lightning-input><br/>
+                                 </td>  
+    
+                                </tr>
+    
+                            </table>
+                               
+                                
+                                
+                            
+                                <lightning-button label="Submit" onclick={handleSubmitClick}></lightning-button>
+                                    
+                        
+                            
+                        </div>
+                    </lightning-card>
+        </template>
+     <template  if:true ={formcompleted}>
+     <lightning-card title="Record Submitted " icon-name="standard:account">
+                <div class="slds-p-around_x-small">
+                   
+                          <table style ="width :50%;margin-left:15px;border-spacing:0;margin-top:-63px;">
+                            <tr>
+                                <td style="font-weight: bold;">
+                                    Salesperson/Trader : 
+                                </td>
+                                <td>
+                                      <div class="slds-truncate" >{rec.trader}</div>	
+                                           
+                                </td>
+                            </tr>
+                                <tr>
+                                    <td style="font-weight: bold;">
+                                        Account Name: 
+                                    </td>
+                                    <td>
+                                    <div class="slds-truncate">{rec.Name}</div>	
+                                       
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold;">
+                                        Address:
+                                        City/State/Zip/Postcode/Country:- 
+                                    </td>
+                                    <td>
+                                        <!--template if:true={mapMarkers}>
+                                            <lightning-map map-markers={mapMarkers}></lightning-map>
+                                        </template-->
+                                            <div class="slds-truncate">{rec.BillingCountry}</div>	
+                                        
+                                            
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold;">
+                                        Account Main Phone #: 
+                                    </td>
+                                    <td>
+                                            <div class="slds-truncate">{rec.MainPhone}</div>	
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold;"> 
+                                        Primary Line of Business: 
+                                    </td>
+                                    <td>
+                                        <div class="slds-truncate">{rec.PrimaryLB}</div>	
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold;">
+                                        Assets Under Management: 
+                                    </td>
+                                    <td>
+                                         <div class="slds-truncate">{rec.AssestUM}</div>	
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td style="font-weight: bold;">
+                                        Government Fund? 
+                                    </td>
+                                    <td>
+                                     <div class="slds-truncate">{rec.GFund}</div>
+                                    
+                                </td>     
+                                      
+                                </tr><br></br>
+                                <tr>
+                                    <td style="font-weight: bold;">
+                                        Account Type: 
+                                    </td>
+                                    <td>
+                                   <div class="slds-truncate">{rec.AccountType}</div>
+                                </td>     
+                                 
+                                </tr>
+                               
+                                
+                          </table>
+                             
+                       
+                       
+                            <h3 class="slds-section-title--divider">Contact Information</h3>
+                            <table style ="width :50%;margin-left: 15px;border-spacing:0;">
+                            <tr>
+                                <td style="font-weight: bold;">
+                                    Contact FirstName :
+                                </td>
+                                <td>
+                                      <div class="slds-truncate">{rec.FName}</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold;">
+                                    Contact LastName :
+                                </td>
+                                <td>
+                                     <div class="slds-truncate">{rec.LName}</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold;">
+                                Role :
+                            </td>
+                            <td>
+                                <div class="slds-truncate">{rec.CRole}</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">
+                                Title:
+                            </td>
+                            <td>
+                               <div class="slds-truncate">{rec.Title}</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">
+                                Product Responsibility:
+                            </td>
+                            <td>
+                              <div class="slds-truncate">{rec.ProductOption}</div>
+                          
+                           
+                    </td>
+                        </tr>
+    
+                        <tr>
+                            <td >
+                               <span style="font-weight: bold;"> Influence:</span>
+                                <br></br>
+                                  <div class="slds-truncate">{rec.Influence}</div>
+                            </td>
+                            <td >
+                                <span style="font-weight: bold;"> BR.com :</span>
+                                <br></br>
+                                 <div class="slds-truncate">{rec.BRcom}</div>
+                            </td>
+                        </tr>
+    
+                        <tr>
+                             <td style="font-weight: bold;">
+                                    Phone :
+                                     <div class="slds-truncate">{rec.Phone}</div>
+                             </td>   
+                             <td style="font-weight: bold;">
+                                Email :
+                                <div class="slds-truncate">{rec.CEmail}</div>
+                         </td>  
+    
+                        </tr>
+    
+                    </table>
+                       
+                        
+                        
+                    
+                        <lightning-button label="Save" onclick={handleClick}></lightning-button>
+                         <lightning-button label="Edit" onclick={handleEditASClick}></lightning-button>   
+                   
+                    
+                </div>
+            </lightning-card>
+    
+     </template>
+    
+    <!--template if:true ={recordCreated}>
+    
+            <lightning-card title="Entered Data " icon-name="standard:account">
+                <div class="slds-p-around_x-small">
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <div class="slds-truncate" title="Account Name">Account Name</div>
+                                </th>
+                                <th class="" scope="col">
+                                    <div class="slds-truncate" title="Industry">Industry</div>
+                                </th>
+                                <th class="" scope="col">
+                                    <div class="slds-truncate" title="Phone">Phone</div>
+                                </th>
+                                <th class="" scope="col">
+                                    <div class="slds-truncate" title="Contact FirstName">Contact FirstName</div>
+                                </th>
+                                <th class="" scope="col">
+                                    <div class="slds-truncate" title="Contact Lastname">Contact Lastname</div>
+                                </th>
+                                <th class="" scope="col">
+                                    <div class="slds-truncate" title="Email">Email</div>
+                                </th>
+                                <th class="" scope="col">
+                                    <div class="slds-truncate" title="Edit">Action</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+    
+                                    <td data-label="Prospecting">
+                                        <div class="slds-truncate" title="Account Name">{rec.Name}</div>
+                                    </td>
+                                    <td data-label="Confidence">
+                                        <div class="slds-truncate" title="Industry">{rec.Industry}</div>
+                                    </td>
+                                    <td data-label="Confidence">
+                                        <div class="slds-truncate" title="Phone">{rec.Phone}</div>
+                                    </td>
+                                    <td data-label="Prospecting">
+                                        <div class="slds-truncate" title="Contact FirstName">{rec.FName}</div>
+                                    </td>
+                                    <td data-label="Confidence">
+                                        <div class="slds-truncate" title="Contact Lastname">{rec.LName}</div>
+                                    </td>
+                                    <td data-label="Confidence">
+                                        <div class="slds-truncate" title="Email">{rec.CEmail}</div>
+                                    </td>
+                                    <td data-label="Confidence">
+                                        <div class="slds-truncate" title="Edit">
+                                            <a name={recordId} onclick={handleClickforEdit}>
+                                                <lightning-icon icon-name="action:edit" size="x-small"></lightning-icon>
+                                            </a>
+                                        </div>
+                                    </td>
+    
+                        </tbody>
+                    </table>
+                </div>
+            </lightning-card>
+            
+            </template-->
+            <template if:true={open}>
+                <div class="demo-only" style="height: 640px;">
+                    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header">
+                            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+                                <lightning-icon icon-name="utility:close" title="close" size="small" onclick={closeModal} variant="inverse"></lightning-icon>
+                            </button>
+                            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Edit Record</h2>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                            <lightning-input label="Name" value={rec.Name} onchange={handleNameChange}></lightning-input>
+                            <!--lightning-input label="Industry" value={rec.Industry} onchange={handleIndChange}></lightning-input-->
+                                <lightning-combobox name="Industry" 
+                                label="Account Industry" value={rec.Industry} placeholder="-Select-"
+                                options={industry} onchange={handleIndChange}>
+                            </lightning-combobox>
+                            <lightning-input type="Phone" label="Phone" value={rec.Phone} onchange={handlePhnChange}></lightning-input><br/>
+                        
+                            <h3 class="slds-section-title--divider">Contact Information</h3>
+                        
+                            <lightning-input label="Contact FirstName" value={rec.FName} onchange={handleFNameChange}></lightning-input>
+                            <lightning-input label="Contact LastName" value={rec.LName} onchange={handleLNameChange}></lightning-input>
+                            <lightning-input type="Email" label="Contact Email" value={rec.CEmail} onchange={handleCEmailChange}></lightning-input><br/>
+                        
+                            <lightning-button label="Save" onclick={handleClick}></lightning-button>
+                        </div>
+                        <!--<footer class="slds-modal__footer">
+                        <button class="slds-button slds-button_neutral">Cancel</button>
+                        <button class="slds-button slds-button_brand">Save</button>
+                        </footer>-->
+                    </div>
+                    </section>
+                    <div class="slds-backdrop slds-backdrop_open"></div>
+                </div>
+            </template>
+    </template>
+    
+    </template>

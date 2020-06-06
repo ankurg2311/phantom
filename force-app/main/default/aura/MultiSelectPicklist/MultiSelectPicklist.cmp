@@ -1,0 +1,22 @@
+<!--MultiSelectPicklist.cmp-->
+<aura:component controller="searchAccountController">
+     
+    <!--Declare Event Handlers-->
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" description="Call doInit function on component load to get picklist values"/>
+     
+    <!--Declare Attributes-->
+    <aura:attribute name="GenreList" type="List" default="[]" description="Genre Picklist Values"/>
+    <aura:attribute name="selectedGenreList" type="List" default="[]" description="Selected Genre Picklist Values"/>
+    <aura:attribute name="objectName" type ="String"/>
+    <div class="slds-m-around_xx-large">
+        <lightning:dualListbox aura:id="selectGenre"
+                               name="Genre"
+                               label="Select fields"
+                               sourceLabel="Available fields"
+                               selectedLabel="Selected fields"
+                               options="{!v.GenreList }"
+                               value="{!v.selectedGenreList}"
+                               onchange="{!c.handleGenreChange}"/>
+        <lightning:button variant="brand" label="Get Selected fields" onclick="{!c.getSelectedGenre}" />
+    </div>
+</aura:component>

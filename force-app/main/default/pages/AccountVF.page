@@ -1,0 +1,22 @@
+<apex:page controller="AccountInlineEditCLs">
+    <apex:form >
+        <apex:pageBlock mode="inlineEdit">
+            <apex:pageBlockButtons >
+                <apex:commandbutton value="save" action="{!save1}"/>
+            </apex:pageBlockButtons>
+            <!-- calling getAccounts() methods in pageblock table -->
+            <apex:pageBlockTable value="{!accounts}" var="a">
+                <apex:column Headervalue="Account Name">
+                    <apex:outputfield value="{!a.name}"/>
+                </apex:column>
+                <apex:column headervalue="Industry">
+                    <apex:outputfield value="{!a.industry}"/>
+                </apex:column>
+                <apex:column >
+                    <apex:outputfield value="{!a.type}"/>
+                </apex:column>
+                
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

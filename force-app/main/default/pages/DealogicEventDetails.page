@@ -1,0 +1,641 @@
+<!--apex:page standardController="Dealogic_Event_Conference__c" extensions="DealogicDetailExtension"  sidebar="false" showHeader="false" lightningStylesheets="true"--> 
+<apex:page controller="DealogicEventsController" action="{!getDealogicDetails}"  sidebar="false" showHeader="false" lightningStylesheets="true"> 
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" />
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js" />
+    <apex:styleSheet value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/themes/smoothness/jquery-ui.css" />
+    <apex:slds />
+  
+    <style>
+        .customSubheader{
+        background-color: #2776bd !important;
+        
+        color:white;
+        
+        font-size: 116%;
+        padding: 2px 2px 2px 5px;
+        margin-top: 10px;
+        overflow: hidden;
+        margin-bottom: 2px;
+        }
+        body .bPageBlock{
+            border:0px;
+        }
+     
+        body .pbBottomButtons{
+             margin-right: 116px;
+        }
+        body .bPageBlock .pbBody .pbSubheader {
+        background-color: #2776bd !important;
+        height:30px;
+        color:white;
+        }
+        
+        body .bPageBlock .pbBody .pbSubheader .hideListButton {
+        margin-top: -6px;
+        }
+         .custPopup{
+                background-color: white;
+                border-width: 2px;
+                border-style: solid;
+                z-index: 9999;
+                left: 50%;
+                padding:10px;
+                position: absolute;
+                /* These are the 3 css properties you will need to change so the popup 
+                displays in the center of the screen. First set the width. Then set 
+                margin-left to negative half of what the width is. You can add 
+                the height property for a fixed size pop up if you want.*/
+                width: 440px;
+                margin-left: -250px;
+                top: 192px;
+                height: 138px;
+          }
+        .popupBackground{
+        /* background-color:black;
+        //background: rgba(76, 175, 80, 0.3);
+        opacity: 0.20;
+        filter: alpha(opacity = 20);
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 9998;*/
+        position: fixed; 
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: 0.25;
+        z-index: 1000;
+        background-color: black;
+        }
+         body .bPageBlock .pbBody .pbSubheader {
+            background-color: #94b9d1;
+            }
+        div.wrapper {
+        position: relative;
+        clear: both;
+        width: 100%;
+       
+        }
+        div.left {
+        float: left;
+        width: 40%;
+        }   
+        div.right {
+        float: right;
+        width: 60%;
+        style ="margin-left: 384px;"
+      
+        }
+        .placeHolder {
+        font-style: italic !important;
+        font-weight: lighter !important;
+        }
+          /*CSS for MODAL POPUP STARTS*/     
+        
+        /* Modal Header */
+        .modal-header {
+        padding: 8px 16px;
+        background-color: red;
+        color: white;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+       
+        }
+        
+         /* Modal Header */
+        .modal-header-child {
+        padding: 8px 16px;
+        background-color: red;
+        color: white;
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+       
+        }
+        
+        /* Modal Body */
+        .modal-body {padding: 2px 16px;
+            height:  170px;}
+         .modal-body-child {padding: 2px 16px;
+    
+        
+        }
+        
+        /* Modal Footer */
+        .modal-footer {
+        padding: 2px 16px;
+        background-color: #5cb85c;
+        color: white;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+        
+        }
+        
+        /* Modal Content */
+        .modal-content {
+        position: fixed;
+        background-color: #fefefe;
+        z-index: 9999;
+        left: 50%;
+        //: ;
+        padding: 0;
+        border: 1px solid #888;
+        width: 600px;
+        margin-left: -250px;
+        top: 125px;
+        height: 253px;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+       border-radius: 8px;
+        
+        }
+        .odd { 
+        background-color: #FCF7F7;
+        }
+        .even {
+        background-color: #E3DCDB;
+        }
+        .modal-content-child {
+        position: fixed;
+        background-color: #fefefe;
+        z-index: 9999;
+        left: 50%;
+        padding: 0;
+        border: 1px solid #888;
+        width: 400px;
+        margin-left: -135px;
+    top: 171px;
+        height: 150px;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+        border-radius: 6px;
+        
+        }
+        .ui-helper-hidden-accessible { 
+        display:none; 
+        }
+        /* Add Animation */
+        @keyframes animatetop {
+        from {top: 100px; opacity: 0}
+        to {top: 192px; opacity: 1}
+        }
+        
+        /*CSS for MODAL POPUP ENDS*/
+        .ui-autocomplete-loading {
+        background: white url('/img/loading32.gif') right center no-repeat ;
+        background-size:10%;
+        
+        }
+   .slds-scope .slds-button_neutral{
+       }
+
+    </style>
+    <apex:form id="createDataForm" >
+        <apex:outputPanel id="JSRender"> 
+            <script  type="text/javascript">
+            
+            document.title = 'Dealogic Event Detail';
+            /* function callSearchParticipant(){
+            if(event.keyCode==13){
+                doSearchParticipant();
+                return false;
+            }
+        }  
+      */ 
+         
+         
+         document.onkeypress = function(event){
+             var targetID =   event.target.id 
+             if(event.keyCode==13 && targetID.includes('searchParticipant')){
+                 doSearchParticipant();
+                 return false;
+             }
+         }
+         
+         
+         var  $ = jQuery.noConflict(); 
+              var PLACEHOLDER = 'Search Employee'; 
+         $(document).ready(function(){
+             
+           
+             var movieObjects;
+             var queryTerm;
+             
+             $('[id$=movieTextBoxId]').autocomplete({
+                 minLength: 2,
+                 source: function(request, response) {
+                     queryTerm = request.term;
+                     DealogicEventsController.searchEmployee(request.term, function(result, event){
+                         if(event.type == 'exception') {
+                             alert(event.message);
+                         } else {
+                             console.log('$$$$$$$$$  ');
+                             movieObjects = result;
+                             response(movieObjects);
+                         }
+                     });
+                 },
+                 focus: function( event, ui ) {
+                     $('[id$=movieTextBoxId]').val( ui.item.Name );
+                     return false;
+                 },
+                 select: function( event, ui ) {
+                     $('[id$=movieTextBoxId]').val( ui.item.Name );
+                     $('[id$=searchMovieId]').val( ui.item.Id );
+                     $('[id$=dealogicName]').val( ui.item.Name );
+                     $('[id$=externalId]').val(ui.item.Name + ':' + $('[id$=eventExtID]').val());
+                     $('[id$=movieTextBoxId]').next("span").remove();
+                     $('[id$=addbutton]').css("display", "block");
+                     return false;
+                 },
+             }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+                 var entry = "<a>" + item.Name;
+                 entry = entry + "</a>";
+                 entry = entry.replace(queryTerm, "<b>" + queryTerm + "</b>");
+                 return $( "<li></li>" )
+                 .data( "item.autocomplete", item )
+                 .append( entry )
+                 .appendTo( ul );
+             };
+             
+             // Add or remove placeholder values
+             $('[id$=movieTextBoxId]').val(PLACEHOLDER);
+             $('[id$=movieTextBoxId]').on("focus",  function(event){
+                 $tgt = $(event.target);
+                 if($tgt.val() === PLACEHOLDER ){
+                     $tgt.val('');
+                     $tgt.removeClass('placeHolder');
+                 }
+             });
+             $('[id$=movieTextBoxId]').on( "blur",  function(event){
+                 $tgt = $(event.target);
+                 if($tgt.val() === '' ){
+                     $tgt.val(PLACEHOLDER);
+                     $tgt.addClass('placeHolder');
+                     $('[id$=addbutton]').css("display", "none");
+                     $('[id$=dealogicName]').val(''); 
+                     $('[id$=externalId]').val(''); 
+                 }
+             });
+             
+         });
+            
+            function removeText(){
+                  console.log('Testing');
+                $('[id$=movieTextBoxId]').val('');
+                $('[id$=movieTextBoxId]').val(PLACEHOLDER);
+                console.log('Testing');
+                $('[id$=movieTextBoxId]').addClass('placeHolder');
+                console.log('Testing');
+                $('[id$=addbutton]').css("display", "none");
+            }
+         </script>
+        </apex:outputPanel>  
+        <apex:inputHidden id="searchMovieId" value="{!dealogicKeyParticipant.Employee__c}" />
+        <apex:inputHidden id="eventExtID" value="{!eventExternalID}" />
+        <apex:inputHidden value="{!dealogicKeyParticipant.External_Id__c}" id="externalId"/>
+        <apex:inputHidden id="dealogicName" value="{!dealogicKeyParticipant.Name}"/> 
+
+        <apex:actionFunction name="doSearchParticipant" action="{!getKeyParticipantsSort}"  status="actStatusId" reRender="ParticipantDetails" />
+        <div style="margin-bottom:-43px;margin-left: 512px;">
+            <!--apex:outputPanel rendered="{! IF( searchKey != null && searchKey!='',  true, false)}"-->
+                <apex:outputLink styleClass="slds-m-top_xx-small slds-button slds-button_neutral btnSubmit" style="background-color: #f99b2c;border-color: #f99b2c;color:white;" target="_top" value="/apex/DealogicEventConf?key={!searchKey}">Back to Home</apex:outputLink>  
+            <!--/apex:outputPanel-->
+           
+        </div>
+        <apex:outputPanel id="tstpopup">
+            
+        
+            
+        <!--apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displaymsg1}" /-->
+             <!--apex:outputPanel layout="block" rendered="{!displaymsg1}"-->
+                     
+                          <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displaymsg}"/>
+                          <apex:outputPanel layout="block" rendered="{!displaymsg}">
+                              
+                              <!-- Modal content -->
+                              <div class="modal-content-child">
+                                  <div class="modal-header-child" >
+                                      <span id ="Closure" class="close"></span>
+                                      <h2>Alert!</h2>
+                                  </div>
+                                  <div class="modal-body-child">
+                                      <center><br/>
+                                          <apex:outputText rendered="{!IF(displayExisting ,  true, false)}">
+                                              The Employee : <b>{!searchTerm}</b> has been already added as key participant to this event.<br/>
+                                          </apex:outputText>
+                                          <apex:outputText rendered="{!! IF(displayExisting ,  true, false)}">
+                                              Please select an employee to add as key participant.<br/><br/>
+                                          </apex:outputText>
+                                          
+                                          
+                                          <apex:commandButton styleClass="slds-button slds-button_neutral" value="OK" action="{!closePopup}" reRender="tstpopup" style="width:50px;" oncomplete="removeText();"/>
+                                          
+                                      </center>
+                                  </div>
+                              </div>
+                              
+                          </apex:outputPanel>
+                          <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUp}"/>
+                          <apex:outputPanel layout="block" rendered="{!displayPopUp}">
+                              
+                              <!-- Modal content -->
+                              <div class="modal-content-child">
+                                  <div class="modal-header" style ="background-color: #2776bd; !important;">
+                                      <span id ="Closure" class="close"></span>
+                                      <h2>Confirm</h2>
+                                  </div>
+                                  <div class="modal-body-child">
+                                      <center><br/>
+                                          Please confirm if you want to add this employee:<b>{!searchTerm}</b>  as key participant to the event.<br/>
+                                          <div style="margin-top: 10px;">
+                                              <apex:commandButton value="Yes" styleClass="slds-button slds-button_neutral" action="{!SaveModal}" reRender="ParticipantDetails,tstpopup,createDataForm" status="actStatusId" style="width:50px;" />
+                                              <apex:commandButton styleClass="slds-button slds-button_neutral" value="No" action="{!closePopup}" reRender="tstpopup,JSRender" style="width:50px;" oncomplete="removeText();"/> 
+                                          </div>  
+                                          
+                                      </center>
+                                  </div>
+                              </div>
+                              
+                          </apex:outputPanel>
+                <!-- Modal content -->
+                <!--div class="modal-content">
+                    <div class="modal-header" style ="background-color: #2776bd; !important;" >
+                        <span id ="Closure" class="close"></span>
+                        <h2>New Participant</h2>
+                    </div>
+                    <div class="modal-body">
+                     
+                       
+                        <table style ="margin: 13px;margin-left: 61px;border-collapse: separate;border-spacing: 0 9px;">
+                            <tr>
+                                <td style="width: 200px;font-weight: bold;color: #4a4a56;">
+                                      <apex:outputLabel value="Dealogic Key Participant Name " for="dealogicName"/>
+                                </td>
+                                 <td>
+                                     <apex:inputField label="Participant Name " id="dealogicName" value="{!dealogicKeyParticipant.Name}" html-disabled="true" style="width:250px;"/> 
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 200px;font-weight: bold;color: #4a4a56;">
+                                    <apex:outputLabel value="External Id " for="externalId"/>
+                                </td>
+                                 <td>
+                                 <apex:inputField label="External Id " value="{!dealogicKeyParticipant.External_Id__c}" id="externalId" html-disabled="true" style="width:250px;"/>
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 200px;font-weight: bold;color: #4a4a56;">
+                                     <apex:outputLabel value="Employee " for="movieTextBoxId"/>
+                                </td>
+                                 <td>
+                                    <apex:inputText label="Employee " id="movieTextBoxId" value="{!searchTerm}" styleClass="placeHolder" style="width:250px;"/>
+                                </td>
+                            </tr>
+                            
+                        </table>
+                    </div>
+                    <div class="modal-footer" style ="background-color: white; !important;">
+                         <center>
+                         <apex:commandButton style="background-color: #f99b2c; !important;border-color:#f99b2c;color:white;"  styleClass="slds-button slds-button_neutral" value="Save" action="{!showPopup}" status="actStatusId" reRender="tstpopup" /> 
+                         &nbsp;<apex:commandButton style="background-color: #f99b2c; !important;border-color:#f99b2c;color:white;"  styleClass="slds-button slds-button_neutral" value="Cancel" action="{!closePopup1}" reRender="tstpopup"/> 
+                        </center>
+                    </div>
+                 </div-->
+                
+            </apex:outputPanel>
+         <!--/apex:outputPanel-->
+        
+        
+    <apex:pageBlock title="Dealogic Event Conference"> 
+        
+        <apex:pageBlockSection title="Information" columns="2"> 
+            <apex:outputField title="Dealogic Event Conference Name" value="{!dealogicEventConfDetail.Name}"/> 
+            <apex:outputField title="Start Date" value="{!dealogicEventConfDetail.Start_Date__c}"/> 
+
+            <apex:outputField title="End Date" value="{!dealogicEventConfDetail.End_Date__c}"/> 
+            <apex:outputField title="External Id" value="{!dealogicEventConfDetail.External_Id__c}"/>
+
+        </apex:pageBlockSection>
+        
+        <!--apex:pageBlockSection title="Dealogic Key Participants Page #{!pageNumberDKP}  of  {!totalPageNoDKP}" columns="1" id="ParticipantDetails"--> 
+            
+            <!--apex:commandButton value="New Key Participant" styleClass="slds-button slds-button_neutral"  action="{!CreateNewKey}"/-->
+            
+            <div class="customSubheader" title="Dealogic Key Participants">Dealogic Key Participants
+            </div>   
+            
+            <apex:outputPanel id="ParticipantDetails">
+                
+                <div class="wrapper">  
+                    <div class="left"  style ="margin-bottom:5px">
+                       <apex:inputText label="Employee " id="movieTextBoxId" value="{!searchTerm}" styleClass="placeHolder" style="width:250px;"/>
+                       <apex:commandButton id="addbutton" style="margin-left: 259px;margin-top: -32px;display:none;background-color: #f99b2c; !important;border-color:#f99b2c;color:white;"  styleClass="slds-button slds-button_neutral" value="Add" action="{!showPopup}" status="actStatusId" reRender="tstpopup" /> 
+                        <!--apex:outputLink styleClass="slds-m-top_xx-small slds-button slds-button_brand btnSubmit" style="margin-top:-2px;background-color: #f99b2c; !important;border-color:#f99b2c;" target="_top" value="/apex/DealogicKeyParticipantsNew?Id={!EventID}">New Key Participant</apex:outputLink--> 
+                       <!-- <apex:commandButton style="margin-top:-2px;background-color: #f99b2c; !important;border-color:#f99b2c;"  styleClass="slds-button slds-button_brand" value="New Key Participant" action="{!showPopup1}" status="actStatusId" reRender="tstpopup" oncomplete="start();"/> 
+                        
+                       &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;<apex:inputText value="{!searchParticipantKey}" required="false" id="searchParticipant" title="Search Participants"/>
+                        &nbsp; &nbsp;<apex:commandButton value="Search" styleClass="slds-button slds-button_neutral" style="background-color: #f99b2c; !important;border-color:#f99b2c;color:white;" action="{!getKeyParticipantsSort}" reRender="ParticipantDetails" status="actStatusId"/>
+                        -->
+                        <div style="margin-top: -32px;margin-left: 320px;">
+                            <apex:actionStatus id="actStatusId" style="">
+                                <apex:facet name="start" >
+                                    <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+                                        &nbsp;
+                                    </div>
+                                    
+                                    <img src="/img/loading32.gif" width="25" height="25" />
+                                    
+                                    
+                                </apex:facet>
+                            </apex:actionStatus> 
+                        </div>
+                        
+                    </div>
+                    <apex:outputPanel rendered="{! IF( EventID != null && (dealogicParticipantsList.size >0 || searchParticipantKey !=null),  true, false)}">
+                        <div class="right" >
+                            <apex:commandButton styleClass="slds-button slds-button_neutral" value="First Page" rerender="ParticipantDetails,JSRender" action="{!FirstPageDKP}" disabled="{!!prevDKP}"  status="actStatusId" style=" float:left;"/>
+                            <apex:commandButton styleClass="slds-button slds-button_neutral" value="Previous" rerender="ParticipantDetails,JSRender" action="{!previousDKP}" disabled="{!!prevDKP}" status="actStatusId" style=" float:left;"/>
+                            <apex:commandButton styleClass="slds-button slds-button_neutral" value="Next" rerender="ParticipantDetails,JSRender" action="{!nextDKP}" disabled="{!!nxtDKP}"  status="actStatusId" style="float:left;"/>
+                            <apex:commandButton styleClass="slds-button slds-button_neutral" value="Last Page" rerender="ParticipantDetails,JSRender" action="{!LastPageDKP}" disabled="{!!nxtDKP}"  status="actStatusId" style="float:left;"/>
+                        </div>
+                    </apex:outputPanel>
+                </div>
+                
+             <apex:outputPanel rendered="{! IF( EventID != null && dealogicParticipantsList.size == 0 && searchParticipantKey ==null ,  true, false)}" >
+               
+                <div class="wrapper">  
+                    <div class="left" style="margin-top: 29px;" >
+                        No records to display.
+                    </div>
+                    
+                </div>
+            </apex:outputPanel>
+                
+            <apex:pageBlockTable value="{!dealogicParticipantsList}" var="a"   rendered="{! IF( EventID != null && (dealogicParticipantsList.size >0 || searchParticipantKey !=null),  true, false)}">
+                 <br/>
+                <!--apex:column headerValue="Participant Name"-- >
+                    <!--apex:outputLink target="_blank" value="/apex/DealogicDetails?id={!a.id}">{!a.Name}</apex:outputLink-->
+                <apex:column >
+                    <apex:facet name="header" >   
+                        <apex:commandLink style="font-weight:bold;" action="{!getKeyParticipantsSort}" value="Participant Name{!IF(sortExpression=='Name',IF(sortDirection='ASC','▼','▲'),'')}" id="kepSortName" status="actStatusId" reRender="ParticipantDetails,JSRender">              
+                            <apex:param value="Name" name="column" assignTo="{!sortExpression}" ></apex:param>            
+                        </apex:commandLink>
+                    </apex:facet>  
+                    <apex:outputfield value="{!a.Name}" />
+                </apex:column>
+                <!--apex:column headervalue="Account" -->
+                <apex:column >
+                    <apex:facet name="header">   
+                        <apex:commandLink style="font-weight:bold;" action="{!getKeyParticipantsSort}" value="Account{!IF(sortExpression=='Account__c',IF(sortDirection='ASC','▼','▲'),'')}" id="kepSortAcc" status="actStatusId" reRender="ParticipantDetails,JSRender">              
+                            <apex:param value="Account__c" name="column" assignTo="{!sortExpression}" ></apex:param>            
+                        </apex:commandLink>
+                    </apex:facet>  
+                    <apex:outputfield value="{!a.Account__c}" />
+                </apex:column>
+                <!--apex:column headervalue="Contact"  -->
+                <apex:column >
+                    <apex:facet name="header">   
+                        <apex:commandLink style="font-weight:bold;" action="{!getKeyParticipantsSort}" value="Contact{!IF(sortExpression=='Contact__c',IF(sortDirection='ASC','▼','▲'),'')}" id="kepSortCon" status="actStatusId" reRender="ParticipantDetails,JSRender">              
+                            <apex:param value="Contact__c" name="column" assignTo="{!sortExpression}" ></apex:param>            
+                        </apex:commandLink>
+                    </apex:facet>  
+                    <apex:outputfield value="{!a.Contact__c}" />
+                </apex:column>
+                <!--apex:column headervalue="Employee"-->
+                    <apex:column >
+                        <apex:facet name="header">   
+                            <apex:commandLink style="font-weight:bold;" action="{!getKeyParticipantsSort}" value="Employee{!IF(sortExpression=='Employee__r.Name',IF(sortDirection='ASC','▼','▲'),'')}" id="kepSortEmp" status="actStatusId" reRender="ParticipantDetails,JSRender">              
+                                <apex:param value="Employee__r.Name" name="column" assignTo="{!sortExpression}" ></apex:param>            
+                            </apex:commandLink>
+                        </apex:facet>  
+                        <apex:outputfield value="{!a.Employee__r.Name}"/>
+                    </apex:column>
+                <!--apex:column headervalue="Status"-->
+                <apex:column >
+                    <apex:facet name="header">   
+                        <apex:commandLink style="font-weight:bold;" action="{!getKeyParticipantsSort}" value="Status{!IF(sortExpression=='Status__c',IF(sortDirection='ASC','▼','▲'),'')}" id="kepSortStatus" status="actStatusId" reRender="ParticipantDetails,JSRender">              
+                            <apex:param value="Status__c" name="column" assignTo="{!sortExpression}" ></apex:param>            
+                        </apex:commandLink>
+                    </apex:facet>  
+                    <apex:outputfield value="{!a.Status__c}"/>
+                </apex:column>
+                <!--apex:column headervalue="Type"-->
+                <apex:column >
+                    <apex:facet name="header">   
+                        <apex:commandLink style="font-weight:bold;" action="{!getKeyParticipantsSort}" value="Type{!IF(sortExpression=='Type__c',IF(sortDirection='ASC','▼','▲'),'')}" id="kepSortType" status="actStatusId" reRender="ParticipantDetails,JSRender">              
+                            <apex:param value="Type__c" name="column" assignTo="{!sortExpression}" ></apex:param>            
+                        </apex:commandLink>
+                    </apex:facet>  
+                    <apex:outputfield value="{!a.Type__c}"/>
+                </apex:column>
+                
+                
+            </apex:pageBlockTable>
+                 
+                
+                <apex:outputPanel style="margin-left:325px;"  rendered="{! IF( EventID != null && (dealogicParticipantsList.size >0 || searchParticipantKey !=null),  true, false)}" >
+                    
+                    <div class="right" style="padding-top:9px" >    
+                        <apex:commandButton styleClass="slds-button slds-button_neutral" value="First Page" rerender="ParticipantDetails,JSRender" action="{!FirstPageDKP}" disabled="{!!prevDKP}"  status="actStatusId"/>
+                        <apex:commandButton styleClass="slds-button slds-button_neutral" value="Previous" rerender="ParticipantDetails,JSRender" action="{!previousDKP}" disabled="{!!prevDKP}" status="actStatusId"/>
+                        <apex:commandButton styleClass="slds-button slds-button_neutral" value="Next" rerender="ParticipantDetails,JSRender" action="{!nextDKP}" disabled="{!!nxtDKP}"  status="actStatusId"/>
+                        <apex:commandButton styleClass="slds-button slds-button_neutral" value="Last Page" rerender="ParticipantDetails,JSRender" action="{!LastPageDKP}" disabled="{!!nxtDKP}"  status="actStatusId"/>
+                    </div> 
+                </apex:outputPanel>
+                
+              </apex:outputPanel> 
+            
+            
+          
+        <!--/apex:pageBlockSection-->
+        <!--apex:pageBlockSection title="Dealogic Attendees Page #{!pageNumberDA}  of  {!totalPageNoDA}" columns="1" id="AttendeesDetails" --> 
+        <div style="position: relative;clear: both;width: 100%;">
+            
+        </div>
+             <div class="customSubheader" title="Dealogic Attendees ">Dealogic Attendees 
+            </div> 
+            <apex:outputPanel rendered="{! IF( EventID != null && dealogicAttendeeList.size >0,  true, false)}" id="AttendeesDetails">
+                <div class="wrapper">  
+                    <div class="left"  >
+                        <apex:actionStatus id="actStatusId2">
+                            <apex:facet name="start">
+                                <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+                                    &nbsp;
+                                </div>
+                                
+                                <img src="/img/loading32.gif" width="25" height="25" />
+                            </apex:facet>
+                        </apex:actionStatus>
+                    </div>
+                    <div class="right" style="padding-bottom:9px">
+                        <apex:commandButton styleClass="slds-button slds-button_neutral" value="First Page" rerender="AttendeesDetails" action="{!FirstPageDA}" disabled="{!!prevDA}"  status="actStatusId2"/>
+                        <apex:commandButton styleClass="slds-button slds-button_neutral" value="Previous" rerender="AttendeesDetails" action="{!previousDA}" disabled="{!!prevDA}" status="actStatusId2"/>
+                        <apex:commandButton styleClass="slds-button slds-button_neutral" value="Next" rerender="AttendeesDetails" action="{!nextDA}" disabled="{!!nxtDA}"  status="actStatusId2"/>
+                        <apex:commandButton styleClass="slds-button slds-button_neutral" value="Last Page" rerender="AttendeesDetails" action="{!LastPageDA}" disabled="{!!nxtDA}"  status="actStatusId2"/>
+                    </div>
+                   
+                    
+                </div>
+                
+                <apex:pageBlockTable value="{!dealogicAttendeeList}" var="a"  >
+                    <!--apex:column headerValue="Name"-->
+                    <apex:column >
+                        <apex:facet name="header">   
+                            <apex:commandLink style="font-weight:bold;" action="{!getKeyAttendeesSort}" value="Name{!IF(sortExpression=='Name',IF(sortDirection='ASC','▼','▲'),'')}" id="daSortName" status="actStatusId2" reRender="AttendeesDetails">              
+                                <apex:param value="Name" name="column" assignTo="{!sortExpression}" ></apex:param>            
+                            </apex:commandLink>
+                        </apex:facet>   
+                        <apex:outputfield value="{!a.Name}" />
+                    </apex:column>
+                    <!--apex:column headervalue="Account" -->
+                    <apex:column >
+                        <apex:facet name="header">   
+                            <apex:commandLink style="font-weight:bold;" action="{!getKeyAttendeesSort}" value="Account{!IF(sortExpression=='Account__r.Name',IF(sortDirection='ASC','▼','▲'),'')}" id="daSortAcc" status="actStatusId2" reRender="AttendeesDetails">              
+                                <apex:param value="Account__r.Name" name="column" assignTo="{!sortExpression}" ></apex:param>            
+                            </apex:commandLink>
+                        </apex:facet>   
+                        <apex:outputfield value="{!a.Account__r.Name}" />
+                    </apex:column>
+                    <!--apex:column headervalue="Contact"-->
+                        <apex:column >
+                            <apex:facet name="header">   
+                                <apex:commandLink style="font-weight:bold;" action="{!getKeyAttendeesSort}" value="Contact{!IF(sortExpression=='Contact__r.Name',IF(sortDirection='ASC','▼','▲'),'')}" id="daSortCon" status="actStatusId2" reRender="AttendeesDetails">              
+                                    <apex:param value="Contact__r.Name" name="column" assignTo="{!sortExpression}" ></apex:param>            
+                                </apex:commandLink>
+                            </apex:facet> 
+                        <apex:outputfield value="{!a.Contact__r.Name}" />
+                    </apex:column>
+                    <!--apex:column headervalue="External Id"-->
+                        <apex:column >
+                            <apex:facet name="header">   
+                                <apex:commandLink style="font-weight:bold;" action="{!getKeyAttendeesSort}" value="External Id{!IF(sortExpression=='External_Id__c',IF(sortDirection='ASC','▼','▲'),'')}" id="daSortExt" status="actStatusId2" reRender="AttendeesDetails">              
+                                    <apex:param value="External_Id__c" name="column" assignTo="{!sortExpression}" ></apex:param>            
+                                </apex:commandLink>
+                            </apex:facet> 
+                        <apex:outputfield value="{!a.External_Id__c}"/>
+                    </apex:column>
+                </apex:pageBlockTable>
+                 <apex:outputPanel style="margin-left:325px;" >
+                    <div class="right" style="padding-top:9px">
+                        <apex:commandButton styleClass="slds-button slds-button_neutral" value="First Page" rerender="AttendeesDetails" action="{!FirstPageDA}" disabled="{!!prevDA}"  status="actStatusId"/>
+                        <apex:commandButton styleClass="slds-button slds-button_neutral" value="Previous" rerender="AttendeesDetails" action="{!previousDA}" disabled="{!!prevDA}" status="actStatusId"/>
+                        <apex:commandButton styleClass="slds-button slds-button_neutral" value="Next" rerender="AttendeesDetails" action="{!nextDA}" disabled="{!!nxtDA}"  status="actStatusId"/>
+                        <apex:commandButton styleClass="slds-button slds-button_neutral" value="Last Page" rerender="AttendeesDetails" action="{!LastPageDA}" disabled="{!!nxtDA}"  status="actStatusId"/>
+                    </div>
+                </apex:outputPanel>
+                
+            </apex:outputPanel>
+           
+            <apex:outputPanel rendered="{! IF( EventID != null && dealogicAttendeeList.size == 0,  true, false)}">
+                No records to display.
+            </apex:outputPanel>
+            
+            
+
+        <!--/apex:pageBlockSection-->
+    </apex:pageBlock> 
+    </apex:form>
+
+</apex:page>

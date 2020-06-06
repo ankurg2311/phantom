@@ -1,0 +1,64 @@
+<apex:page controller="ContactSearchController" action="{!searchCon}" sidebar="false" showHeader="false">
+<apex:slds />
+    <script type="text/javascript">
+      function  saveContact1(){
+          alert('Hello debg');
+          saveContact();
+          }
+    </script>
+    <apex:form >   
+        <apex:pageBlock id="thePb" title="Contact Details To Search"  >
+            <apex:pageblockSection id="thepbs">
+                <apex:inputtext value="{!cont.Name}" required="true" id="conName"/>
+            </apex:pageblockSection>
+            <apex:pageblockButtons location="bottom">
+                <apex:outputPanel >
+                    <apex:commandButton value="Search" action="{!searchCon}" />
+                </apex:outputPanel>
+            </apex:pageblockButtons>
+        </apex:pageBlock>
+        
+        <apex:pageBlock title="Contact Details" id="noRec" rendered="{! IF( contactList != null && contactList.size ==0 , true, false)}" >
+            <apex:outputPanel >
+                <h1>No Records Found </h1>
+            </apex:outputPanel>
+        </apex:pageBlock>       
+        <apex:pageBlock title="Contact Details" id="details" rendered="{! IF( contactList != null && contactList.size >0, true, false)}" mode="inlineEdit">
+          
+                <apex:commandbutton value="save" action="{!saveUpdate}" />
+                 
+            <apex:pageBlockTable value="{!contactList}" var="a" >
+                <!--apex:column headerValue="Contact ID">
+					<apex:outputLink target="_blank" value="/{!a.id}">{!a.ID}</apex:outputLink> 
+				</apex:column--> 
+                <apex:column headerValue="Contact Name">
+                    <apex:outputLink target="_blank" value="/{!a.id}">{!a.Name}</apex:outputLink> 
+                </apex:column>   
+                <!--  If you want facet style you can add like this.
+					<apex:column >
+					<apex:facet name="header">Link Name</apex:facet>
+					<apex:outputLink target="_blank" value="/{!a.id}">{!a.Name}</apex:outputLink> 
+					</apex:column>
+				-->
+                <apex:column value="{!a.Name}" headerValue="Name"/>  
+                <apex:column value="{!a.Account.Name}" headerValue="Account Name"/>  
+                <apex:column value="{!a.Account.Substatus__c}" headerValue="Account Substatus"/>  
+                <apex:column value="{!a.Account.T1C_Base_Inactive__c}" headerValue="Account T1C_Base_Inactive"/>
+                <apex:column value="{!a.T1C_Base_Inactive__c}" headerValue="T1C_Base_Inactive"/> 
+                <!--apex:column headerValue="T1C_Base_Inactive">
+                    <apex:outputField value="{!a.T1C_Base_Inactive__c}" />
+                </apex:column--> 
+            </apex:pageBlockTable> 
+            <apex:pageblockButtons >
+                <apex:commandButton value="First Page" rerender="details" action="{!FirstPage}" disabled="{!prev}"/>
+                <apex:commandButton value="Previous" rerender="details" action="{!previous}" disabled="{!prev}"/>
+                <apex:commandButton value="Next" rerender="details" action="{!next}" disabled="{!nxt}"/>
+                <apex:commandButton value="Last Page" rerender="details" action="{!LastPage}" disabled="{!nxt}"/>
+            </apex:pageblockButtons>
+          
+        </apex:pageBlock>
+        
+    </apex:form>
+    
+    
+</apex:page>

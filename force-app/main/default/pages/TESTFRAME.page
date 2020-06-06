@@ -1,0 +1,31 @@
+<apex:page >
+    <apex:sectionHeader title="Client SwitchType"/>
+    <apex:tabPanel switchType="client" selectedTab="wikipedia">
+        <apex:tab label="wikipedia" name="wikipedia">
+            <apex:iframe src="https://www.wikipedia.org"/>
+        </apex:tab>
+        <apex:tab label="Bing" name="BingName">
+            <apex:iframe src="https://www.bing.com"/>
+        </apex:tab>        
+    </apex:tabPanel>
+    
+    <apex:sectionHeader title="Server SwitchType"/>
+    <apex:tabPanel switchType="server"  selectedTab="wikipedia">
+        <apex:tab label="wikipedia" name="wikipedia">
+            <apex:iframe src="https://www.wikipedia.org"/>
+        </apex:tab>
+        <apex:tab label="Bing" name="BingName">
+            <apex:iframe src="https://www.bing.com"/>
+        </apex:tab>        
+    </apex:tabPanel>    
+    
+    <apex:sectionHeader title="Ajax SwitchType"/>
+    <apex:tabPanel switchType="ajax"  selectedTab="wikipedia">
+        <apex:tab label="wikipedia" name="wikipedia">
+            <apex:iframe src="https://www.wikipedia.org"/>
+        </apex:tab>
+        <apex:tab label="Bing" name="BingName">
+            <apex:iframe src="https://www.bing.com"/>
+        </apex:tab>        
+    </apex:tabPanel>     
+</apex:page>

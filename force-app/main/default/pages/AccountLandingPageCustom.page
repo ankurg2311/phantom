@@ -1,0 +1,80 @@
+<apex:page controller="AccountSearchController"   sidebar="false" showHeader="false"  docType="html-5.0">
+
+    <apex:form id="form2">
+        <apex:pageBlock id="thePb" title="Contact Details To Search">
+           
+                <apex:outputLabel style="font-weight:bold;color:#4a4a56;">Search for Contact or Account:</apex:outputLabel>
+                        <apex:inputText value="{!accountSearchKey}" required="false" id="conName" label="Contact Name" onkeyup="callFunctionOnEnterKey();"/>
+            <apex:pageblockButtons location="bottom">
+                
+                    <apex:commandButton value="Search" styleClass="slds-button slds-button_neutral" action="{!searchAccounts}" reRender="form3,form2" />
+                        <apex:actionStatus id="actStatusId">
+                        <apex:facet name="start">
+                            <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+                                &nbsp;
+                            </div>
+                            
+                            <img src="/img/loading32.gif" width="25" height="25" />
+                            
+                            
+                        </apex:facet>
+                    </apex:actionStatus>
+                
+             
+            </apex:pageblockButtons>
+        </apex:pageBlock>
+        
+ 		<apex:actionFunction name="doSearch" action="{!searchAccounts}" reRender="form3,form2"   status="actStatusId" />
+    </apex:form>
+    
+    <apex:form id="form3" >
+
+            
+     <apex:pageBlock >  
+           
+            <apex:pageBlockTable value="{!accList}" var="a" columnsWidth="2px" >
+                
+                <apex:column headerValue="Account Name" >
+                    <!--apex:outputLink target="_blank" value="/{!a.id}">{!a.Name}</apex:outputLink-->
+                    <apex:outputfield value="{!a.Name}" /> 
+                </apex:column>
+                <apex:column headervalue="Account Name" >
+                    <apex:outputfield value="{!a.Name}" />
+                </apex:column>
+               
+                <apex:column headervalue="Account Substatus">
+                    <apex:outputfield value="{!a.Substatus__c}"/>
+                </apex:column>
+                <apex:column headervalue="Account T1C_Base_Inactive" >
+                    <apex:outputfield value="{!a.T1C_Base_Inactive__c}"/>
+                </apex:column>
+              
+                
+                
+
+                
+            </apex:pageBlockTable>
+            
+        </apex:pageBlock>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+        
+        <script>
+            var $ = jQuery.noConflict();
+        function callFunctionOnEnterKey(){
+            var ContactName = $('[id$=conName]').val();
+           
+            if(event.keyCode==13){
+                console.log('@@@@@ ContactName is  ' +ContactName);
+                if(ContactName != ''){
+                    doSearch();
+                }
+            }
+        }
+        </script>
+
+            
+    </apex:form>
+  
+    
+    
+</apex:page>

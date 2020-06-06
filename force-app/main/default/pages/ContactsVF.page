@@ -1,0 +1,420 @@
+<apex:page controller="ContactSearchController"   sidebar="false" showHeader="false" lightningStylesheets="true" docType="html-5.0">
+<apex:slds />
+
+    <style type="text/css">
+        .pbSubsection{
+        width:80%
+        }
+        body .pbBottomButtons{
+             margin-right: 116px;
+        }
+        .custPopup{
+        background-color: white;
+        border-width: 2px;
+        border-style: solid;
+        z-index: 9999;
+        left: 50%;
+        padding:10px;
+        position: absolute;
+        /* These are the 3 css properties you will need to change so the popup 
+        displays in the center of the screen. First set the width. Then set 
+        margin-left to negative half of what the width is. You can add 
+        the height property for a fixed size pop up if you want.*/
+        width: 440px;
+        margin-left: -250px;
+        top: 192px;
+        height: 138px;
+        }
+        .popupBackground{
+        /* background-color:black;
+        //background: rgba(76, 175, 80, 0.3);
+        opacity: 0.20;
+        filter: alpha(opacity = 20);
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 9998;*/
+        position: fixed; 
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: 0.25;
+        z-index: 1000;
+        background-color: black;
+        }
+        
+        
+        /*CSS for MODAL POPUP STARTS*/     
+        
+        /* Modal Header */
+        .modal-header {
+        padding: 8px 16px;
+        background-color: red;
+        color: white;
+        
+        }
+        
+        /* Modal Body */
+        .modal-body {padding: 2px 16px;}
+        
+        /* Modal Footer */
+        .modal-footer {
+        padding: 2px 16px;
+        background-color: #5cb85c;
+        color: white;
+        }
+        
+        /* Modal Content */
+        .modal-content {
+        position: fixed; 
+        background-color: #fefefe;
+        z-index: 9999;
+        left: 50%;
+        //padding: 0;
+        border: 1px solid #888;
+        width: 440px;
+        margin-left: -250px;
+        top: 192px;
+        height: 150px;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+        animation-name: animatetop;
+        animation-duration: 0.4s
+        
+        }
+        
+        /* Add Animation */
+        @keyframes animatetop {
+        from {top: 100px; opacity: 0}
+        to {top: 192px; opacity: 1}
+        }
+        
+        /*CSS for MODAL POPUP ENDS*/
+        .slds-scope .slds-button_neutral, .slds-scope .slds-button--neutral{
+        float:left;
+        }
+        
+    </style> 
+    
+    
+
+    <apex:form id="form2">
+        <apex:pageBlock id="thePb" title="Contact Details To Search">
+            <div >  
+                <apex:outputLabel style="font-weight:bold;color:#4a4a56;">Search for Contact or Account:</apex:outputLabel>
+                <div style ="margin-left: -90px;" >
+                    <apex:pageblockSection id="thepbs"  > 
+                        
+                        <apex:inputText value="{!contactFieldKey}" required="false" id="conName" label="Contact Name" onkeyup="callFunctionOnEnterKey();"/>
+                        <apex:inputText value="{!accountName}" required="false" id="accName" label="Account Name" onkeyup="callFunctionOnEnterKey();"/>
+                        <!--apex:inputCheckbox value="{!cont.T1C_Base_Inactive__c}" id="ConBaseInactive"/-->
+                    </apex:pageblockSection>
+                </div>
+            </div>
+            <apex:pageblockButtons location="bottom">
+                <apex:outputPanel >
+                    <apex:commandButton value="Search" styleClass="slds-button slds-button_neutral" action="{!searchCon}" reRender="form3,form2" status="actStatusId"/>
+                    <apex:actionStatus id="actStatusId">
+                        <apex:facet name="start">
+                            <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+                                &nbsp;
+                            </div>
+                            
+                            <img src="/img/loading32.gif" width="25" height="25" />
+                            
+                            
+                        </apex:facet>
+                    </apex:actionStatus>
+                
+                </apex:outputPanel>
+            </apex:pageblockButtons>
+        </apex:pageBlock>
+        <apex:pageBlock title="Contact Details" id="noRec" rendered="{! IF( contactList != null && contactList.size ==0 , true, false)}" >
+            <apex:outputPanel >
+                <h1>No record to show. </h1>
+            </apex:outputPanel>
+        </apex:pageBlock> 
+        
+        <apex:actionFunction name="doSearch" action="{!searchCon}" reRender="form3,form2" status="actStatusId"  />
+    </apex:form>
+    
+    <apex:form id="form3" >
+
+        <apex:inputText id="setunchecked" value="{!setunchecked}" style="display:none;"/>
+        <apex:inputText id="setchecked" value="{!setchecked}" style="display:none;"/>
+        <apex:pageBlock title="Contact Details  Page #{!pageNumber}  of  {!totalPageNo}" id="details" rendered="{! IF( contactList != null && contactList.size >0, true, false)}" >
+
+            <apex:commandbutton styleClass="slds-button slds-button_brand" style="background-color:#004487" onclick="setunchekedTrue();setchekedTrue();"  value=" {!setAction} " action="{!showPopup}" reRender="form3,form2" status="actStatusId"  > 
+                <!--onclick="if(!confirm('Are you sure?')){return false};"  -->
+            </apex:commandbutton>
+            
+            <apex:actionStatus id="actStatusId">
+                <apex:facet name="start">
+                    <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+                        &nbsp;
+                    </div>
+                    
+                    <img src="/img/loading32.gif" width="25" height="25" />
+                    
+                    
+                </apex:facet>
+            </apex:actionStatus>
+            <apex:pageBlockButtons >
+                <apex:commandButton onclick="CleartheChange();" styleClass="slds-button slds-button_neutral" value="First Page" rerender="details" action="{!FirstPage}" disabled="{!!prev}" reRender="form3,form2" status="actStatusId"/>
+                <apex:commandButton onclick="CleartheChange();" styleClass="slds-button slds-button_neutral" value="Previous" rerender="details" action="{!previous}" disabled="{!!prev}" reRender="form3,form2" status="actStatusId"/>
+                <apex:commandButton onclick="CleartheChange();" styleClass="slds-button slds-button_neutral" value="Next" rerender="details" action="{!next}" disabled="{!!nxt}" reRender="form3,form2" status="actStatusId"/>
+                <apex:commandButton onclick="CleartheChange();" styleClass="slds-button slds-button_neutral" value="Last Page" rerender="details" action="{!LastPage}" disabled="{!!nxt}" reRender="form3,form2" status="actStatusId"/>
+            </apex:pageBlockButtons>     
+            <apex:pageBlockTable value="{!contactList}" var="a" columnsWidth="2px" >
+                
+                <apex:column headerValue="Contact Name" >
+                    <!--apex:outputLink target="_blank" value="/{!a.id}">{!a.Name}</apex:outputLink-->
+                    <apex:outputfield value="{!a.Name}" /> 
+                </apex:column>
+                <apex:column headervalue="Account Name" >
+                    <apex:outputfield value="{!a.Account.Name}" />
+                </apex:column>
+                <apex:column headervalue="Account RecordType"  >
+                    <apex:outputfield value="{!a.Parent_Record_Type__c}" />
+                </apex:column>
+                <apex:column headervalue="Account Substatus">
+                    <apex:outputfield value="{!a.Account.Substatus__c}"/>
+                </apex:column>
+                <apex:column headervalue="Account T1C_Base_Inactive" >
+                    <apex:outputfield value="{!a.Account.T1C_Base_Inactive__c}"/>
+                </apex:column>
+                <!--apex:column style="width:1px">
+
+<apex:facet name="header" >
+<apex:inputCheckbox id="selectdeselectAll" styleClass="slds-checkbox" onclick="cvCheckAllOrNone(this)" title="Select/Deselect All Rows" value="{!allcheckUncheck}" />
+</apex:facet>
+
+</apex:column -->
+                <apex:column headervalue="T1C_Base_Inactive">
+                    
+                    <apex:outputPanel rendered="{!deactivated}">  
+                        <!--apex:inputfield styleclass="slds-checkbox" value="{!a.T1C_Base_Inactive__c}"  onclick="setunchekedTrue();">@@@ -->
+                        <apex:inputfield styleclass="slds-checkbox"   value="{!a.T1C_Base_Inactive__c}"   onclick="setunchekedTrue();">
+                            <apex:actionSupport action="{!queslist}" event="onchange" reRender="none" >
+                                <apex:param assignTo="{!selectedId}" value="{!a.ID}" name="selectedId"/>
+                            </apex:actionSupport>
+                        </apex:inputfield>
+                    </apex:outputPanel> 
+                    <apex:outputPanel rendered="{!!deactivated}"> 
+                        <apex:inputfield value="{!a.T1C_Base_Inactive__c}"  onclick="setchekedTrue(); " styleclass="slds-checkbox">
+                            </apex:inputfield>
+                      
+                    </apex:outputPanel>
+                </apex:column>
+                
+                
+                
+                <!--apex:column value="{!a.Name}" headerValue="Name"/>  
+<apex:column value="{!a.Account.Name}" headerValue="Account Name"/>  
+<apex:column value="{!a.Account.Substatus__c}" headerValue="Account Substatus"/>  
+<apex:column value="{!a.Account.T1C_Base_Inactive__c}" headerValue="Account T1C_Base_Inactive"/>
+<apex:column value="{!a.T1C_Base_Inactive__c}" headerValue="T1C_Base_Inactive"/--> 
+                
+            </apex:pageBlockTable>
+            
+        </apex:pageBlock>
+           
+        <!--apex:commandButton value="Show Pop up" action="{!showPopup}" rerender="tstpopup"/-->
+        
+        
+        <apex:outputPanel id="tstpopup">
+           
+            <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUp}"/>
+            <apex:outputPanel layout="block" rendered="{!displayPopUp}">
+               
+                <!-- Modal content -->
+                    <div class="modal-content">
+                        <div class="modal-header" style ="background-color:#004487">
+                            <span id ="Closure" class="close"></span>
+                            <h2>Confirm</h2>
+                        </div>
+                        <div class="modal-body">
+                            <center><br/>
+                                Please confirm if you want to {!setAction} the Contact.<br/><br/>
+                                <apex:commandButton value="Yes" styleClass="slds-button slds-button_neutral" action="{!saveUpdate}" reRender="form3,form2,selectdeselectAll" status="actStatusId" style="width:50px;" />
+                                <apex:commandButton styleClass="slds-button slds-button_neutral" value="No" action="{!closePopup}" reRender="form3,form2,selectdeselectAll" style="width:50px;"/>
+                            </center>
+                        </div>
+                    </div>
+               
+            </apex:outputPanel>
+            <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displaymsg}"/> 
+            <apex:outputPanel layout="block" rendered="{!displaymsg}">
+            <div id="myModal" class="modal">
+                <!-- Modal content -->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id ="Closure" class="close"></span>
+                            <h2>Alert!</h2>
+                        </div>
+                        <div class="modal-body">
+                            <center><br/>
+                                Please {!setCheckUncheck} any of the record to {!setAction} and save changes.<br/><br/>
+                                <apex:commandButton styleClass="slds-button slds-button_neutral" value=" OK " action="{!closePopup}" reRender="form3,form2" style="width:50px;"/>
+                            </center>
+                        </div>
+                    </div>
+                </div> 
+            </apex:outputPanel>
+            
+        </apex:outputPanel>
+        
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+       
+            <script>
+                var $ = jQuery.noConflict();
+                function callFunctionOnEnterKey(){
+                    var ContactName = $('[id$=conName]').val();
+                    var AccountName = $('[id$=accName]').val();
+                    if(event.keyCode==13){
+                        console.log('@@@@@ ContactName is  ' +ContactName);
+                        console.log('@@@@@ AccountName is  ' +AccountName); 
+                        if(ContactName != '' || AccountName != ''){
+                            doSearch();
+                        }
+                        
+                    }
+                }
+                
+
+                function setunchekedTrue (){
+                  $(this).css("background","yellow");
+                var sList = "";
+                var checkAll = true;
+                var checked;
+                $('input[type=checkbox]').each(function () {
+                    //console.log('ID is : ' +$(this).attr('id'));
+                    if(!this.id.includes('ConBaseInactive')&& !this.id.includes('selectdeselectAll')){
+                        var sThisVal = (this.checked ? "1" : "0");
+                        checkAll = (this.checked ? true : false);
+                        if(!checkAll){
+                            checked = true;
+                        }
+                        sList += (sList=="" ? sThisVal : "," + sThisVal);
+                    }
+                });
+                console.log ('setunchekedTrue  ' + sList);
+                
+                if(checked){
+                    document.getElementById('{!$Component.form3.setunchecked}').value =true;
+                }else{
+                    document.getElementById('{!$Component.form3.setunchecked}').value =false;   
+                }
+                console.log('######  setunchecked  '+ '{!setunchecked}');
+            }
+            function setchekedTrue (){
+                           
+                    
+                var sList = "";
+                var checkAll;
+                var checked;
+                $('input[type=checkbox]').each(function () {
+                    // console.log('ID is : ' +$(this).attr('id'));
+                    if(!this.id.includes('ConBaseInactive') && !this.id.includes('selectdeselectAll')){
+                        var sThisVal = (this.checked ? "1" : "0");
+                        checkAll = (this.checked ? true : false);
+                        if(checkAll){
+                            checked = true;
+                        }
+                        
+                        sList += (sList=="" ? sThisVal : "," + sThisVal);
+                    }
+                });
+                console.log ('setchekedTrue ' +sList);
+                if(checked){
+                    document.getElementById('{!$Component.form3.setchecked}').value =true;
+                }else{
+                    document.getElementById('{!$Component.form3.setchecked}').value =false;   
+                }
+                console.log('######  setchecked  '+ '{!setchecked}');
+            }
+            
+            function CleartheChange(){
+                var deactivated ='{!deactivated}';
+                
+                //alert('#### deactivated ' +deactivated);
+                $('input[type=checkbox]').each(function () {
+                    //console.log('ID is : ' +$(this).attr('id'));
+                    if(!this.id.includes('ConBaseInactive')){
+                        if(deactivated == 'true' && !this.checked){
+                            //  alert('#### deactivated true' +deactivated);
+                            this.checked = true;
+                        }if(deactivated == 'false' && this.checked){
+                            // alert('#### deactivated false' +deactivated);
+                            this.checked = false;
+                        }
+                    }
+                });
+                
+                
+            }
+            
+            
+            
+            function cvCheckAllOrNone(allOrNoneCheckbox) {
+                var container = allOrNoneCheckbox;
+                // Switch all checkboxes
+                var inputs = container.getElementsByTagName("input");
+                var checked = allOrNoneCheckbox.checked;
+                console.log('##### allOrNoneCheckbox.checked  ' +checked);
+                $('input[type=checkbox]').each(function () {
+                    // console.log('ID is : ' +$(this).attr('id'));
+                    if(!this.id.includes('ConBaseInactive') && !this.id.includes('selectdeselectAll')){
+                        if(checked){
+                            this.checked = true;
+                        }else{
+                            this.checked = false;
+                            
+                        }
+                        
+                        
+                    }
+                });
+                var deactivated ='{!deactivated}';
+                console.log('##### deactivated is ' +deactivated);
+                if(deactivated == 'false'){
+                    setchekedTrue();
+                }if(deactivated == 'true'){
+                    setunchekedTrue();
+                }
+                
+            }
+            
+            function clearparentCheck(){
+                $('input[type=checkbox]').each(function () {
+                    if(this.id.includes('selectdeselectAll')){
+                        this.checked = false;
+                        return false;
+                    }
+                });
+            }
+        
+        /*  var span = document.getElementsByClassName("close")[0];
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function() {
+                modal.style.display = "none";
+            }
+          */  
+            // When the user clicks anywhere outside of the modal, close it
+            window.onclick = function(event) {
+                var modal = document.getElementById("myModal");
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+           
+            </script>
+            
+    </apex:form>
+  
+    
+    
+</apex:page>

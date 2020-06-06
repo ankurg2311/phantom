@@ -1,0 +1,128 @@
+<aura:component controller="searchAccountController" implements="flexipage:availableForAllPageTypes,lightning:actionOverride">   
+       
+    <!-- CREATE ATTRIBUTE/VARIABLE-->
+    <aura:attribute name="searchResult" type="List" description="use for store and display account list return from server"/>
+    <aura:attribute name="searchKeyword" type="String" description="use for store user search input"/>
+     <aura:attribute name="fromDate" type="Date" description="use for store user search input"/>
+    <aura:attribute name="ToDate" type="Date" description="use for store user search input"/>
+    <aura:attribute name="Message" type="boolean" default="false" description="use for display no record found message"/>
+    <aura:attribute name="loadTable" type="boolean" default="false"/>
+    <aura:attribute name="TotalNumberOfRecord" type="integer" default="0" description="use for display Number of records"/>
+    
+       <!--Declare Attributes-->
+    <aura:attribute name="GenreList" type="List" default="[]" description="Genre Picklist Values"/>
+    <aura:attribute name="selectedGenreList" type="List"  default="Id,Name"  description="Selected Genre Picklist Values"/>
+    <aura:attribute name="objectName" type ="String"/>
+    
+    <!-- SHOW LOADING SPINNER--> 
+    <lightning:spinner variant="brand" size="large" aura:id="Id_spinner" class="slds-hide" />
+    
+    <div class="slds-m-around_medium">
+       <!-- SEARCH INPUT AND SEARCH BUTTON--> 
+        <lightning:layout>
+            <lightning:layoutItem size="3" padding="around-small">
+                <lightning:input value="{!v.searchKeyword}"
+                                 required="true"
+                                 placeholder="search Accounts.."
+                                 aura:id="searchField"
+                                 label="Account Name"
+                                 />
+            </lightning:layoutItem>
+             <lightning:layoutItem size="3" padding="around-small">
+             <ui:inputDate aura:id="createdDatefrom" label="Created FROM"
+                           class="slds-input"
+                           labelClass="slds-form-element__label"
+                           value="{!v.fromDate}"
+                           displayDatePicker="true" />
+            </lightning:layoutItem>
+             <lightning:layoutItem size="3" padding="around-small">
+             <ui:inputDate aura:id="createdDateTo" label="Created TO"
+                           class="slds-input"
+                           labelClass="slds-form-element__label"
+                           value="{!v.ToDate}"
+                           displayDatePicker="true" />
+            </lightning:layoutItem>
+          
+        </lightning:layout>
+        <lightning:button variant="brand"
+                          label="Search"
+                          title="Search"
+                          onclick="{! c.Search }" />
+               <lightning:button variant="brand"
+                          label="Select Fields"
+                          title="Select Fields"
+                          onclick="{! c.openModel }" />
+        <!-- TOTAL RECORDS BADGES--> 
+        <!--div class="slds-m-around_x-small">
+            <lightning:badge label="{!v.TotalNumberOfRecord}" />
+        </div-->
+        
+        <!-- ERROR MESSAGE IF NOT RECORDS FOUND--> 
+        <aura:if isTrue="{!v.Message}">
+            <div class="slds-notify_container slds-is-relative">
+                <div class="slds-notify slds-notify_toast slds-theme_error" role="alert">
+                    <div class="slds-notify__content">
+                        <h2 class="slds-text-heading_small">No Records Found...</h2>
+                    </div>
+                </div>
+            </div>
+        </aura:if>
+    <!--aura:if isTrue="{!v.loadTable}"-->   
+        <!-- TABLE CONTENT--> 
+        <c:LightningTable object ="Account" fields ="{!v.selectedGenreList}"  searchKey ="{!v.searchKeyword}"
+                          fromDate ="{!v.fromDate}" toDate = "{!v.ToDate}" aura:id="childCmp"/>
+     <!--/aura:if-->    
+    </div>
+    
+    
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+    
+    <!--Use "slds-m-around_xx-large" class to add standard X-Large padding to the component--> 
+    <div class="slds-m-around_xx-large">
+        
+      
+        <!--Use aura:if tag to display Model Box, on the bese of conditions. [isOpen boolean attribute] -->   
+        <aura:if isTrue="{!v.isOpen}">
+ 
+            <!--###### MODAL BOX Start######--> 
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <!-- ###### MODAL BOX HEADER Start ######-->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Set fields to display </h2>
+                    </header>
+                    <!--###### MODAL BOX BODY Part Start######-->
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <div class="slds-m-around_xx-large">
+                            <lightning:dualListbox aura:id="selectGenre"
+                                                   name="Genre"
+                                                   label="Select fields"
+                                                   sourceLabel="Available fields"
+                                                   selectedLabel="Selected fields"
+                                                   options="{!v.GenreList }"
+                                                   value="{!v.selectedGenreList}"
+                                                   onchange="{!c.handleGenreChange}"/>
+                          
+                        </div>
+                    </div>
+                    <!--###### MODAL BOX FOOTER Part Start ######-->
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="neutral" 
+                                          label="Cancel"
+                                          title="Cancel"
+                                          onclick="{! c.closeModel }"/>
+                          <lightning:button variant="brand" label="Get Selected fields" onclick="{!c.getSelectedGenre}" />
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+            <!--###### MODAL BOX Part END Here ######-->
+            
+        </aura:if>
+    </div>
+</aura:component>
