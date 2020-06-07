@@ -1,6 +1,6 @@
 @isTest
 public class DealogicEventsController_Test {
-//This is test class 
+//This is test classes 
       @testSetup static void setup() {
         // Create common test data
         Integer i;
