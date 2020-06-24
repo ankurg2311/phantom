@@ -3,7 +3,7 @@ public List<account> acclst=new List<account>();
 //Tests
 public List<account> getAccounts(){
  acclst=[select name,industry,type,Description from account];
- system.debug('Hello from Feature_2');
+ system.debug('Hello from Feature_21');
       return acclst;
 
 }
