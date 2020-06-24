@@ -1,6 +1,6 @@
 public class AccountInlineEditCLs {
 public List<account> acclst=new List<account>();
-//Tests
+//Tests :Feature_1
 public List<account> getAccounts(){
  acclst=[select name,industry,type,Description from account];
       return acclst;
