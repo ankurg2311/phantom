@@ -1,6 +1,7 @@
 public class AccountInlineEditCLs {
 public List<account> acclst=new List<account>();
-//Tests
+//Tests This is a commit from Vamshi_develop Feature1
+
 public List<account> getAccounts(){
  acclst=[select name,industry,type,Description from account];
       return acclst;
@@ -8,6 +9,7 @@ public List<account> getAccounts(){
 }
 
 public void save1() {
+     //This is  a comment from feature one.
      update acclst;
 }
 }
