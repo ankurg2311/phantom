@@ -4,6 +4,7 @@ public List<account> acclst=new List<account>();
 
 public List<account> getAccounts(){
  acclst=[select name,industry,type,Description from account];
+ //This is a comment from Feature2 branch developr
       return acclst;
 
 }
